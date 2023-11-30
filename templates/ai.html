@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>人机聊天</title>
+    <!-- 导入 CSRF 令牌 -->
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+</head>
+<body>
+    <h1>人机聊天</h1>
+    <div id="chat-container">
+        {% for message in messages %}
+            <p>{{ message }}</p>
+        {% endfor %}
+    </div>
+    <!-- 在表单中包含 CSRF 令牌 -->
+    <form action="/ai" method="post">
+        <!-- CSRF 令牌字段 -->
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <!-- 用户消息输入字段 -->
+        <input type="text" name="user_message" placeholder="输入消息...">
+        <!-- 提交按钮 -->
+        <input type="submit" value="发送">
+    </form>
+</body>
+</html>

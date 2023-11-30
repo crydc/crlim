@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文件列表</title>
+</head>
+<body>
+    <h1>文件列表</h1>
+    {% if files %}
+        <ul>
+            {% for file in files %}
+                <li>
+                    {{ file }}
+                    <!-- 添加删除按钮 -->
+                    <form action="/files" method="post" style="display: inline;">
+                        <!-- 添加 CSRF 令牌字段 -->
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <!-- 添加文件名字段 -->
+                        <input type="hidden" name="file_to_delete" value="{{ file }}">
+                        <button type="submit">删除</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>文件夹为空</p>
+    {% endif %}
+
+    {% if delete_success is defined %}
+        {% if delete_success %}
+            <p style="color: green;">文件删除成功！</p>
+        {% else %}
+            <p style="color: red;">文件删除失败！</p>
+        {% endif %}
+    {% endif %}
+</body>
+</html>
