@@ -1,3 +1,5 @@
+#已用sqlite数据库替代，可自行替换该虚拟数据
+
 users_data = {
     'admine': {
         'username': 'admine',
