@@ -1,5 +1,6 @@
 Flask==3.0.0
 Flask-WTF
+flask
 SQLAlchemy
 langchain==0.0.336
 huggingface-hub==0.19.4
