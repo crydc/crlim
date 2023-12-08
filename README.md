@@ -33,6 +33,7 @@
 3.如果有优化建议或者方法欢迎联系作者。
 
 4.如果遇到网络链接问题，windows用户请在C:\Users\<你自己的电脑名>目录下创建名为.cache的文件夹，之后将代码文件中的chroma，huggingface，torch三个文件夹复制在.cache的文件夹下
+
 例如:C:\Users\crlim目录下
 ```
 ├─.cache
