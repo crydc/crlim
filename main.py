@@ -11,6 +11,8 @@ from langchain.embeddings import HuggingFaceEmbeddings
 from pdfhandle import DocumentLoader
 from vecdb import VECDB
 from userbd import users_data #用于模拟的数据表
+import sqlite3
+import threading
 
 embedding = HuggingFaceEmbeddings(model_name="moka-ai/m3e-base")
 app = Flask(__name__ , template_folder= 'templates' )
@@ -35,6 +37,13 @@ text =[]
 # 要查看的文件夹路径
 folder_path = './uploads'
 
+
+connections = {}
+
+def get_connection(thread_id):
+    if thread_id not in connections:
+        connections[thread_id] = sqlite3.connect('sqbd/example.db')
+    return connections[thread_id]
 
 # 获取文件夹下的文件列表
 def get_file_list():
@@ -108,12 +117,27 @@ def register():
     if form.validate_on_submit():
         uesrname = form.username.data
         password = form.pwd.data
-        if uesrname in users_data:
-            flash('用户名已存在，请选择其他用户名', 'error')
-        else:
-            users_data[uesrname] = {'username': uesrname, 'password': password}
-            flash('注册成功，请登录', 'success')
-            return redirect(url_for('login'))
+        thread_id = threading.get_ident()
+        connection = get_connection(thread_id)
+        cursor = connection.cursor()
+        cursor.execute('''CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, pws INTEGER)''')
+        #cursor.execute("INSERT INTO users (name, pws) VALUES ('crlims', 701247)")
+        cursor.execute("SELECT * FROM users")
+        rows = cursor.fetchall()
+        #print(rows)
+        for row in rows:
+            #print("dayin")
+            #print(row)
+            if row[-2]==uesrname or row[-1]==password:
+                flash('用户名已存在，请选择其他用户名', 'error')
+            else:
+                break
+        cursor.execute(f"INSERT INTO users (name, pws) VALUES ('{uesrname}', {password})")
+        flash('注册成功，请登录', 'success')
+        connection.commit()
+        connection.close()
+        #print(rows)
+        return redirect(url_for('login'))
     return render_template('register.html',form=form)
 
 #登录页面
@@ -123,16 +147,24 @@ def login():
     form = LoginForm()
     if form.validate_on_submit(): 
         uesrname = form.name.data
-        user = users_data.get(uesrname)
         password = form.password.data
-        if user is None:
-            flash('你还没有注册','error')
-        elif password == user['password']:
-            flash('登录成功', 'success')
-            return redirect(url_for('home'))
-            session['logged_in'] = True
-        else:
-            flash('登录失败，请检查用户名和密码', 'error')
+        thread_id = threading.get_ident()
+        connection = get_connection(thread_id)
+        cursor = connection.cursor()
+        cursor.execute('''CREATE TABLE IF NOT EXISTS users (id INTEGER PRIMARY KEY, name TEXT, pws INTEGER)''')
+        cursor.execute("SELECT * FROM users")
+        rows = cursor.fetchall()
+        #print(rows)
+
+        for row in rows:
+            #print(row[-2],uesrname,row[-1],password)
+            if row[-2]==str(uesrname) and row[-1]==int(password):
+                flash('登录成功', 'success')
+                connection.commit()
+                connection.close()
+                return redirect(url_for('home'))
+                session['logged_in'] = True
+
     return render_template('login.html',form=form)
 
 
@@ -182,6 +214,8 @@ def home():
 #个人中心页面
 @app.route('/profile/<username>', methods=['GET', 'POST'])
 def profile(username):
+
+    '''
     if 'logged_in' not in session :
         return redirect(url_for('index'))
     else:
@@ -193,10 +227,14 @@ def profile(username):
 
             if new_password:
                 # 更新用户密码
-                user['password_hash'] = new_password
+                user['password_hash'] = new_passwordss
                 flash('密码修改成功', 'success')
+'''
+    return render_template('profile.html')#, user=user)
 
-        return render_template('profile.html', user=user)
+
+
+
 
 
 #AI功能使用页面
@@ -260,4 +298,4 @@ def contact():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0")
+    app.run(debug=False, host="0.0.0.0")
