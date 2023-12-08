@@ -14,7 +14,7 @@ from userbd import users_data #用于模拟的数据表
 import sqlite3
 import threading
 
-embedding = HuggingFaceEmbeddings(model_name="moka-ai/m3e-base")
+embedding = HuggingFaceEmbeddings(model_name="./moka-ai_m3e-base")
 app = Flask(__name__ , template_folder= 'templates' )
 csrf = CSRFProtect(app)
 app.config['SECRET_KEY'] = 'mrsoft'
