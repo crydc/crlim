@@ -31,4 +31,17 @@
 2.建议运行前删除vecbd文件夹与uploads文件夹下的所有内容，在运行时重新上传自己的文件，避免受到作者测试时上传的文件与创建的数据库影响。
 
 3.如果有优化建议或者方法欢迎联系作者。
+
+4.如果遇到网络链接问题，windows用户请在C:\Users\<你自己的电脑名>目录下创建名为.cache的文件夹，之后将代码文件中的chroma，huggingface，torch三个文件夹复制在.cache的文件夹下
+例如:C:\Users\crlim目录下
+'''
+├─.cache
+│  ├─chroma
+│  ├─huggingface
+│  │  └─hub
+│  └─torch
+│      └─sentence_transformers
+│          └─moka-ai_m3e-base
+│              └─1_Pooling
+'''
 ## 最后如果有意见建议以及不合适或者错误的地方欢迎联系作者！！！谢谢，作者也很喜欢交朋友。最后希望大鲸鱼给我一个优秀学员！！！！
